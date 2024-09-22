@@ -3,7 +3,7 @@ const router = express.Router();
 const Session = require('../models/session');
 const Response = require('../models/response');
 
-router.post('/query', async (req, res) => {
+router.post('/', async (req, res) => {
   const { userId, query } = req.body;
 
   try {
