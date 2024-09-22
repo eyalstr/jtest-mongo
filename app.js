@@ -19,6 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const queryRouter = require('./routes/query');
+app.use('/query', queryRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
