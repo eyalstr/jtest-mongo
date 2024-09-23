@@ -3,9 +3,15 @@ const request = require('supertest');
 const app = require('../app'); // Adjust the path to your Express app
 const Session = require('../models/session');
 const Response = require('../models/response');
+require('dotenv').config();
+
+
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/dbTest';
+
 
 beforeAll(async () => {
-  await mongoose.connect('mongodb://localhost:27017/dbTest', {
+  //await mongoose.connect('mongodb://localhost:27017/dbTest', {
+    await mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
