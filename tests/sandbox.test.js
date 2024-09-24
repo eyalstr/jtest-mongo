@@ -20,7 +20,7 @@ beforeAll(async () => {
 
   // Insert initial data into the Session and Response collections
   await Session.insertMany([
-    { userId: 'whatsapp:+1234567890', state: 'initial', createdAt: new Date() },
+    { userId: 'whatsapp:+14155238886', state: 'initial', createdAt: new Date() },
     { userId: 'whatsapp:+0987654321', state: 'initial', createdAt: new Date() }
   ]);
 
@@ -44,7 +44,7 @@ describe('Test the /twilio/webhook endpoint', () => {
   
   test('should return initial response for "kupot gemel" via Twilio sandbox', async () => {
     const twilioMessage = {
-      From: 'whatsapp:+1234567890', // Simulate a Twilio WhatsApp user
+      From: 'whatsapp:+14155238886', // Updated to Twilio sandbox number
       Body: 'kupot gemel'            // User's query
     };
 
@@ -56,10 +56,10 @@ describe('Test the /twilio/webhook endpoint', () => {
   });
 
   test('should return category response for "Retirement funds" via Twilio sandbox', async () => {
-    await Session.updateOne({ userId: 'whatsapp:+1234567890' }, { state: 'category' });
+    await Session.updateOne({ userId: 'whatsapp:+14155238886' }, { state: 'category' });
 
     const twilioMessage = {
-      From: 'whatsapp:+1234567890',
+      From: 'whatsapp:+14155238886', // Updated to Twilio sandbox number
       Body: 'Retirement funds'
     };
 
@@ -71,10 +71,10 @@ describe('Test the /twilio/webhook endpoint', () => {
   });
 
   test('should return subcategory response for "Contribution rates" via Twilio sandbox', async () => {
-    await Session.updateOne({ userId: 'whatsapp:+1234567890' }, { state: 'subcategory' });
+    await Session.updateOne({ userId: 'whatsapp:+14155238886' }, { state: 'subcategory' });
 
     const twilioMessage = {
-      From: 'whatsapp:+1234567890',
+      From: 'whatsapp:+14155238886', // Updated to Twilio sandbox number
       Body: 'Contribution rates'
     };
 
@@ -86,10 +86,10 @@ describe('Test the /twilio/webhook endpoint', () => {
   });
 
   test('should return initial response for "Investment tracks" via Twilio sandbox', async () => {
-    await Session.updateOne({ userId: 'whatsapp:+1234567890' }, { state: 'initial' });
+    await Session.updateOne({ userId: 'whatsapp:+14155238886' }, { state: 'initial' });
 
     const twilioMessage = {
-      From: 'whatsapp:+1234567890',
+      From: 'whatsapp:+14155238886', // Updated to Twilio sandbox number
       Body: 'Investment tracks'
     };
 
@@ -101,10 +101,10 @@ describe('Test the /twilio/webhook endpoint', () => {
   });
 
   test('should return category response for "Risk profiles" via Twilio sandbox', async () => {
-    await Session.updateOne({ userId: 'whatsapp:+1234567890' }, { state: 'category' });
+    await Session.updateOne({ userId: 'whatsapp:+14155238886' }, { state: 'category' });
 
     const twilioMessage = {
-      From: 'whatsapp:+1234567890',
+      From: 'whatsapp:+14155238886', // Updated to Twilio sandbox number
       Body: 'Risk profiles'
     };
 
@@ -116,10 +116,10 @@ describe('Test the /twilio/webhook endpoint', () => {
   });
 
   test('should return category response for "Fund types" via Twilio sandbox', async () => {
-    await Session.updateOne({ userId: 'whatsapp:+1234567890' }, { state: 'category' });
+    await Session.updateOne({ userId: 'whatsapp:+14155238886' }, { state: 'category' });
 
     const twilioMessage = {
-      From: 'whatsapp:+1234567890',
+      From: 'whatsapp:+14155238886', // Updated to Twilio sandbox number
       Body: 'Fund types'
     };
 
