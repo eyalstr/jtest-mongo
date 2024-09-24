@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var sandboxRouter = require('./routes/sandbox');
 
 var app = express();
 
@@ -23,6 +24,7 @@ const queryRouter = require('./routes/query');
 app.use('/query', queryRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/twilio', sandboxRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
