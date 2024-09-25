@@ -1,22 +1,29 @@
 const mongoose = require('mongoose');
 const request = require('supertest');
-const app = require('../app'); // Ensure the correct path to the Express app
+const app = require('../app'); // Adjust the path to your Express app
 const Session = require('../models/session');
 const Response = require('../models/response');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 
-// Get MongoDB URI from environment or fall back to production database
 const mongoUri = process.env.MONGODB_URI_PROD || 'mongodb://localhost:27017/dbProductionTest';
 
 beforeAll(async () => {
-  // Connect to MongoDB (ensure connection to a dedicated test database)
+  // Connect to MongoDB (both for test and production environments)
   await mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
 
-  // Populate the Response collection with the required data (sessions are handled dynamically in production)
-  await Response.deleteMany({}); // Clear only response data in test, careful with production collections
+  // Clear collections before running tests (affects both environments)
+  await Session.deleteMany({});
+  await Response.deleteMany({});
+
+  // Insert initial data into the Session and Response collections
+  await Session.insertMany([
+    { userId: 'whatsapp:+972545664886', state: 'initial', createdAt: new Date() },
+    { userId: 'whatsapp:+0987654321', state: 'initial', createdAt: new Date() }
+  ]);
+
   await Response.insertMany([
     { state: 'initial', query: 'kupot gemel', responseMessage: 'Are you interested in retirement funds, disability insurance, or investment tracks?' },
     { state: 'category', query: 'Retirement funds', responseMessage: 'Would you like to know about contribution rates or withdrawal rules?' },
@@ -30,15 +37,15 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // Close MongoDB connection after the tests
+  // Close the MongoDB connection (applies to both environments)
   await mongoose.connection.close();
 });
 
-describe('Production Tests for the /twilio/webhook endpoint', () => {
-  // Simulate the first interaction with the Twilio webhook
-  test('should return initial response for "kupot gemel"', async () => {
+describe('Test the /twilio/webhook endpoint', () => {
+
+  test('should return initial response for "kupot gemel" via client WhatsApp number', async () => {
     const twilioMessage = {
-      From: 'whatsapp:+972545664886', // Production-like WhatsApp number
+      From: 'whatsapp:+972545664886', // Simulated client WhatsApp number
       Body: 'kupot gemel'              // User's query
     };
 
@@ -49,13 +56,11 @@ describe('Production Tests for the /twilio/webhook endpoint', () => {
     );
   });
 
-  // Simulate a response after the session has progressed to 'category'
-  test('should return category response for "Retirement funds"', async () => {
-    // Manually update the session state
+  test('should return category response for "Retirement funds" via client WhatsApp number', async () => {
     await Session.updateOne({ userId: 'whatsapp:+972545664886' }, { state: 'category' });
 
     const twilioMessage = {
-      From: 'whatsapp:+972545664886',
+      From: 'whatsapp:+972545664886', // Simulated client WhatsApp number
       Body: 'Retirement funds'
     };
 
@@ -66,12 +71,11 @@ describe('Production Tests for the /twilio/webhook endpoint', () => {
     );
   });
 
-  // Simulate response for the "Contribution rates" subcategory
-  test('should return subcategory response for "Contribution rates"', async () => {
+  test('should return subcategory response for "Contribution rates" via client WhatsApp number', async () => {
     await Session.updateOne({ userId: 'whatsapp:+972545664886' }, { state: 'subcategory' });
 
     const twilioMessage = {
-      From: 'whatsapp:+972545664886',
+      From: 'whatsapp:+972545664886', // Simulated client WhatsApp number
       Body: 'Contribution rates'
     };
 
@@ -82,12 +86,11 @@ describe('Production Tests for the /twilio/webhook endpoint', () => {
     );
   });
 
-  // Simulate a new initial state request
-  test('should return initial response for "Investment tracks"', async () => {
+  test('should return initial response for "Investment tracks" via client WhatsApp number', async () => {
     await Session.updateOne({ userId: 'whatsapp:+972545664886' }, { state: 'initial' });
 
     const twilioMessage = {
-      From: 'whatsapp:+972545664886',
+      From: 'whatsapp:+972545664886', // Simulated client WhatsApp number
       Body: 'Investment tracks'
     };
 
@@ -98,12 +101,11 @@ describe('Production Tests for the /twilio/webhook endpoint', () => {
     );
   });
 
-  // Simulate a query for risk profiles
-  test('should return category response for "Risk profiles"', async () => {
+  test('should return category response for "Risk profiles" via client WhatsApp number', async () => {
     await Session.updateOne({ userId: 'whatsapp:+972545664886' }, { state: 'category' });
 
     const twilioMessage = {
-      From: 'whatsapp:+972545664886',
+      From: 'whatsapp:+972545664886', // Simulated client WhatsApp number
       Body: 'Risk profiles'
     };
 
@@ -114,12 +116,11 @@ describe('Production Tests for the /twilio/webhook endpoint', () => {
     );
   });
 
-  // Simulate a query for fund types
-  test('should return category response for "Fund types"', async () => {
+  test('should return category response for "Fund types" via client WhatsApp number', async () => {
     await Session.updateOne({ userId: 'whatsapp:+972545664886' }, { state: 'category' });
 
     const twilioMessage = {
-      From: 'whatsapp:+972545664886',
+      From: 'whatsapp:+972545664886', // Simulated client WhatsApp number
       Body: 'Fund types'
     };
 
@@ -129,4 +130,5 @@ describe('Production Tests for the /twilio/webhook endpoint', () => {
       '<Response><Message>Details on Fund types are being processed.</Message></Response>'
     );
   });
+
 });
